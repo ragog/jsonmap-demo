@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>jsonmap</title>
+		<script type="text/javascript">
+			async function fetchApiKey() {
+				let response = await fetch('/api/v1/users', { method: 'POST' });
+				let data = await response.json();
+				document.querySelector('#api_key').textContent = data.id;
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			Welcome to jsonmap!
+			<p>Generate your API key below and <a href="https://github.com/ragog/RESTore">read the docs</a> to get started.</p>
+
+			<div>Your API key: (please store your key safely - it won't be shown again)</div>
+			<div id="api_key"></div>
+
+			<form name="key-form" action="javascript:fetchApiKey()">
+				<button type="submit">Generate key</button>
+			</form>
+
+			<div>Got any questions or requests? Get in touch:</div>
+
+			<form action="https://formspree.io/f/mrgjledv" method="POST">
+				<label>
+					Your email:
+					<input type="email" name="email" />
+				</label>
+				<div>
+					<label>
+						Your message:
+						<textarea name="message"></textarea>
+					</label>
+				</div>
+				<!-- your other form fields go here -->
+				<button type="submit">Send</button>
+			</form>
+
+			⚠ do not use jsonmap to save sensitive data of any kind ⚠
+
+		</div>
+	</body>
+</html>
