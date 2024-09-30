@@ -25,8 +25,12 @@ router.get('/v1/items', async (req, res) => {
 });
 
 router.put('/v1/item/:key', async (req, res) => {
-	const hashedToken = getHashFromRequest(res);
-	const ownerUser = await User.findOne({ apikey: hashedToken });
+	
+	try {
+		const hashedToken = getHashFromRequest(res);
+		const ownerUser = await User.findOne({ apikey: hashedToken });
+	} catch {}
+	
 	res.status(500).send();
 });
 
