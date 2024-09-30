@@ -5,6 +5,7 @@ const router = new express.Router();
 const preExec = require('../middleware/middleware.js');
 const uuid = require('uuid');
 const getHashFromRequest = require('../helper/helper.js');
+const { trace, context } = require('@opentelemetry/api');  // Import trace and context from OpenTelemetry
 
 router.use(preExec);
 
@@ -16,11 +17,6 @@ router.get('/v1/items', async (req, res) => {
 	const items = await Item.find({ owner: ownerUser.id });
 	const formatItems = items.map((x) => ({ key: x.key, value: x.value }));
 
-	if(process.env.SLOWMO) {
-		const delay = Math.floor(Math.random() * 200) * 10;
-		await new Promise(resolve => setTimeout(resolve, delay));
-	}
-
 	res.send(formatItems);
 });
 
@@ -28,6 +24,12 @@ router.put('/v1/item/:key', async (req, res) => {
 	
 	try {
 		const hashedToken = getHashFromRequest(res);
+		// Get the current active span
+		const currentSpan = trace.getSpan(context.active());
+		if (currentSpan) {
+		  currentSpan.recordException(error);
+		  currentSpan.setStatus({ code: 2, message: 'MongoDB failure' }); // Code 2 represents an error in OpenTelemetry.
+		}
 		const ownerUser = await User.findOne({ apikey: hashedToken });
 	} catch {}
 	
