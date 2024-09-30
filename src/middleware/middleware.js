@@ -1,6 +1,8 @@
 const User = require("../model/user.js");
 const crypto = require("crypto")
 const getHashFromRequest = require('../helper/helper.js')
+const { trace } = require('@opentelemetry/api');  // Import trace and context from OpenTelemetry
+
 
 const authMiddleware = async function (req, res, next) {
   console.log(`Request received: ${req.method} ${req.url}`);
@@ -21,9 +23,12 @@ const authMiddleware = async function (req, res, next) {
   if (authHeader.startsWith("Bearer ")) {
     const hashedToken = getHashFromRequest(req)
 
-    if(process.env.SLOWMO) {
-      const delay = Math.floor(Math.random() * 200) * 10;
-      await new Promise(resolve => setTimeout(resolve, delay));
+    if(req.path.includes("/item/")) {
+      const currentSpan = trace.getSpan(context.active());
+      if (currentSpan) {
+        currentSpan.recordException(error);
+        currentSpan.setStatus({ code: 2, message: 'MongoDB failure' }); // Code 2 represents an error in OpenTelemetry.
+      }
     }
 
     User.find({ apikey: hashedToken }).countDocuments((error, count) => {
