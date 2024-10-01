@@ -1,7 +1,7 @@
 const User = require("../model/user.js");
 const crypto = require("crypto")
 const getHashFromRequest = require('../helper/helper.js')
-const { trace } = require('@opentelemetry/api');  // Import trace and context from OpenTelemetry
+const { trace, context } = require('@opentelemetry/api');  // Import trace and context from OpenTelemetry
 
 
 const authMiddleware = async function (req, res, next) {
