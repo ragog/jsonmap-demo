@@ -25,13 +25,14 @@ const authMiddleware = async function (req, res, next) {
     // mocking error
 		if (req.path.includes('/item/')) {
 			try {
-				const items = await User.find();
-				res.json(items);
+				// const items = await User.find();
+				// res.json(items);
+        throw new Error('Some Error!')
 			} catch (error) {
 				const currentSpan = trace.getSpan(context.active());
 				if (currentSpan) {
 					currentSpan.recordException(error);
-					currentSpan.setStatus({ code: 2, message: 'MongoDB failure' }); // Code 2 represents an error in OpenTelemetry.
+					currentSpan.setStatus({ code: 2, message: 'MongoDB failure' });
 				}
 			}
 		}
