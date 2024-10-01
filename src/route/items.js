@@ -20,8 +20,7 @@ router.get('/v1/items', async (req, res) => {
 });
 
 router.put('/v1/item/:key', async (req, res) => {
-	
-	res.status(500).send();
+	res.status(200).send();
 });
 
 router.put('/v1/items/:key', async (req, res) => {
